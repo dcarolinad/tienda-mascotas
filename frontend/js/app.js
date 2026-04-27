@@ -2,17 +2,31 @@ let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
 
 const contenedor = document.getElementById('productos');
 
-
+let catalogo = [
+    {
+        nombre: "Alimento para perro",
+        precio: 20000,
+        imagen: "img/perro.jpg"
+    },
+    {
+        nombre: "Juguete para gato",
+        precio: 15000,
+        imagen: "img/gato.jpg"
+    },
+    {
+        nombre: "Shampoo mascota",
+        precio: 12000,
+        imagen: "img/shampoo.jpg"
+    }
+];
 
 function corazonFav(p) {
-    const on =
-        typeof estaEnFavoritos === 'function' && estaEnFavoritos(p);
+    const on = typeof estaEnFavoritos === 'function' && estaEnFavoritos(p);
     return on ? '♥' : '♡';
 }
 
 function clasesFav(p) {
-    const on =
-        typeof estaEnFavoritos === 'function' && estaEnFavoritos(p);
+    const on = typeof estaEnFavoritos === 'function' && estaEnFavoritos(p);
     return on
         ? 'btn btn-danger btn-sm btn-fav position-absolute top-0 end-0 m-2'
         : 'btn btn-light btn-sm btn-fav position-absolute top-0 end-0 m-2';
@@ -32,25 +46,13 @@ function escapeHtml(s) {
         .replace(/"/g, '&quot;');
 }
 
-
 function safeImgSrc(u) {
     return String(u ?? '').replace(/["'<>]/g, '');
 }
 
+function renderProductos() {
+    if (!contenedor) return;
 
-let catalogo = [
-    {
-        nombre: "Alimento para perro",
-        precio: 20000,
-        imagen: "img/perro.jpg"
-    },
-    {
-        nombre: "Juguete para gato",
-        precio: 15000,
-        imagen: "img/gato.jpg"
-    }
-
-    function renderProductos() {
     contenedor.innerHTML = '';
 
     catalogo.forEach((p, index) => {
@@ -58,15 +60,16 @@ let catalogo = [
         <div class="col-md-4">
             <div class="card mb-4 shadow">
                 <div class="producto-thumb">
-                    <img src="${p.imagen}" alt="${p.nombre}">
+                    <img src="${p.imagen}" alt="${escapeHtml(p.nombre)}">
                 </div>
                 <div class="card-body">
-                    <h5>${p.nombre}</h5>
-                    <p>$${p.precio}</p>
-
-                    <button class="btn btn-primary"
-                        data-idx="${index}" data-action="cart">
+                    <h5 class="card-title">${escapeHtml(p.nombre)}</h5>
+                    <p class="card-text">$${p.precio}</p>
+                    <button class="btn btn-primary" data-idx="${index}" data-action="cart">
                         Agregar al carrito
+                    </button>
+                    <button class="btn btn-outline-danger" data-idx="${index}" data-action="fav">
+                        ${corazonFav(p)}
                     </button>
                 </div>
             </div>
@@ -74,36 +77,47 @@ let catalogo = [
         `;
     });
 }
-];renderProductos();
+
 function onProductosClick(ev) {
     const btn = ev.target.closest('[data-action][data-idx]');
-    if (!btn || !contenedor.contains(btn)) return;
-    const i = parseInt(btn.getAttribute('data-idx'), 10);
+    if (!btn) return;
+
+    const i = parseInt(btn.dataset.idx);
     const p = catalogo[i];
+
     if (!p) return;
-    const action = btn.getAttribute('data-action');
+
+    const action = btn.dataset.action;
+
     if (action === 'cart') {
         agregarCarrito(p);
-    } else if (action === 'fav') {
-        
-        toggleFavorito(p, { currentTarget: btn });
     }
+
+    if (action === 'fav') {
+        if (typeof toggleFavorito === 'function') {
+            toggleFavorito(p, { currentTarget: btn });
+        }
+    }
+}
+
+function agregarCarrito(producto) {
+    carrito.push(producto);
+    localStorage.setItem('carrito', JSON.stringify(carrito));
+    actualizarContador();
+    alert('Producto agregado 🤖');
 }
 
 const contador = document.getElementById('contador');
 
 function actualizarContador() {
-    contador.innerText = carrito.length;
+    if (contador) {
+        contador.innerText = carrito.length;
+    }
 }
 
+if (contenedor) {
+    contenedor.addEventListener('click', onProductosClick);
+}
+
+renderProductos();
 actualizarContador();
-
-function agregarCarrito(producto) {
-    carrito.push(producto);
-
-    localStorage.setItem('carrito', JSON.stringify(carrito));
-
-    actualizarContador();
-
-    alert('Producto agregado 🤖');
-}
