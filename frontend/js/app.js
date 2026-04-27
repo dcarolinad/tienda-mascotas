@@ -49,6 +49,31 @@ let catalogo = [
         precio: 15000,
         imagen: "img/gato.jpg"
     }
+
+    function renderProductos() {
+    contenedor.innerHTML = '';
+
+    catalogo.forEach((p, index) => {
+        contenedor.innerHTML += `
+        <div class="col-md-4">
+            <div class="card mb-4 shadow">
+                <div class="producto-thumb">
+                    <img src="${p.imagen}" alt="${p.nombre}">
+                </div>
+                <div class="card-body">
+                    <h5>${p.nombre}</h5>
+                    <p>$${p.precio}</p>
+
+                    <button class="btn btn-primary"
+                        data-idx="${index}" data-action="cart">
+                        Agregar al carrito
+                    </button>
+                </div>
+            </div>
+        </div>
+        `;
+    });
+}
 ];renderProductos();
 function onProductosClick(ev) {
     const btn = ev.target.closest('[data-action][data-idx]');
