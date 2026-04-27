@@ -3,11 +3,6 @@ let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
 const contenedor = document.getElementById('productos');
 
 
-let catalogo = [];
-
-if (typeof actualizarContadorFavoritos === 'function') {
-    actualizarContadorFavoritos();
-}
 
 function corazonFav(p) {
     const on =
