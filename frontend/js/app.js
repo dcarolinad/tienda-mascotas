@@ -4,19 +4,34 @@ const contenedor = document.getElementById('productos');
 
 let catalogo = [
     {
-        nombre: "Alimento para perro",
+        nombre: "Cama para mascota",
+        precio: 45000,
+        imagen: "./img/cama.jpg"
+    },
+    {
+        nombre: "Concentrado premium",
+        precio: 30000,
+        imagen: "./img/concentrado.jpg"
+    },
+    {
+        nombre: "Consulta veterinaria",
+        precio: 60000,
+        imagen: "./img/doctor.jpg"
+    },
+    {
+        nombre: "Juguetes para mascota",
         precio: 20000,
-        imagen: "img/perro.jpg"
+        imagen: "./img/juguete.jpg"
     },
     {
-        nombre: "Juguete para gato",
+        nombre: "Peluquería canina",
+        precio: 35000,
+        imagen: "./img/peluqueria.jpg"
+    },
+    {
+        nombre: "Productos varios",
         precio: 15000,
-        imagen: "img/gato.jpg"
-    },
-    {
-        nombre: "Shampoo mascota",
-        precio: 12000,
-        imagen: "img/shampoo.jpg"
+        imagen: "./img/varios.jpg"
     }
 ];
 
@@ -46,10 +61,6 @@ function escapeHtml(s) {
         .replace(/"/g, '&quot;');
 }
 
-function safeImgSrc(u) {
-    return String(u ?? '').replace(/["'<>]/g, '');
-}
-
 function renderProductos() {
     if (!contenedor) return;
 
@@ -62,12 +73,15 @@ function renderProductos() {
                 <div class="producto-thumb">
                     <img src="${p.imagen}" alt="${escapeHtml(p.nombre)}">
                 </div>
+
                 <div class="card-body">
                     <h5 class="card-title">${escapeHtml(p.nombre)}</h5>
                     <p class="card-text">$${p.precio}</p>
+
                     <button class="btn btn-primary" data-idx="${index}" data-action="cart">
                         Agregar al carrito
                     </button>
+
                     <button class="btn btn-outline-danger" data-idx="${index}" data-action="fav">
                         ${corazonFav(p)}
                     </button>
