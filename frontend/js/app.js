@@ -43,51 +43,18 @@ function safeImgSrc(u) {
 }
 
 
-fetch('http://localhost:3000/api/productos')
-    .then((res) => {
-        if (!res.ok) throw new Error('No se pudieron cargar los productos');
-        return res.json();
-    })
-    .then((data) => {
-        if (!Array.isArray(data)) throw new Error('Respuesta inválida');
-        catalogo = data;
-        contenedor.innerHTML = '';
-        data.forEach((p, index) => {
-            const precio =
-                p.precio != null && p.precio !== '' ? p.precio : '—';
-            const nombre = escapeHtml(p.nombre);
-            const imgSrc = safeImgSrc(p.imagen);
-            contenedor.innerHTML += `
-        <div class="col-md-4">
-            <div class="card mb-4 shadow">
-                <div class="producto-thumb">
-                    <img src="${imgSrc}" alt="${nombre}" loading="lazy">
-                    <button type="button" class="${clasesFav(p)}" title="Favorito" aria-pressed="${ariaFav(p)}"
-                        data-idx="${index}" data-action="fav">
-                        ${corazonFav(p)}
-                    </button>
-                </div>
-                <div class="card-body">
-                    <h5 class="card-title">${nombre}</h5>
-                    <p class="card-text">$${precio}</p>
-                    <button type="button" class="btn btn-primary" data-idx="${index}" data-action="cart">
-                        Agregar al carrito
-                    </button>
-                </div>
-            </div>
-        </div>
-        `;
-        });
-        contenedor.addEventListener('click', onProductosClick);
-        if (typeof actualizarContadorFavoritos === 'function') {
-            actualizarContadorFavoritos();
-        }
-    })
-    .catch((err) => {
-        console.error(err);
-        contenedor.innerHTML = `<div class="col-12"><p class="alert alert-warning">No se pudieron cargar los productos. ¿Está el servidor en <code>http://localhost:3000</code>? (${escapeHtml(err.message)})</p></div>`;
-    });
-
+let catalogo = [
+    {
+        nombre: "Alimento para perro",
+        precio: 20000,
+        imagen: "img/perro.jpg"
+    },
+    {
+        nombre: "Juguete para gato",
+        precio: 15000,
+        imagen: "img/gato.jpg"
+    }
+];renderProductos();
 function onProductosClick(ev) {
     const btn = ev.target.closest('[data-action][data-idx]');
     if (!btn || !contenedor.contains(btn)) return;
